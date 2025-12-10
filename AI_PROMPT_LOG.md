@@ -42,3 +42,41 @@ My Decision: Accepted the overall architecture with key modifications based on r
 Verification: Will verify through Firebase documentation review and testing during implementation. Will ensure UI matches Figma design requirements.
 
 ---
+
+### 2 — Firestore Data Model and API Contract Design
+
+Date/Phase: Planning
+Tool: Claude (Sonnet 4.5)
+
+Goal: Design Firestore database schema and define the contract between frontend and backend for logo generation workflow
+
+Context: Need to structure data for tracking logo generation jobs with real-time status updates. Must support client-writable fields (prompt, style, preferences) and server-writable fields (status, results). Design should be ready for future AI integration while keeping MVP simple.
+
+Prompt: "Design a Firestore schema for tracking logo generation jobs. Requirements:
+
+- Client writes: prompt, logo style (none/monogram/abstract/mascot), surprise me toggle
+- Server updates: status (processing/done/failed), status messages, result URL
+- Support real-time listeners for status updates
+- Include clear separation between client-writable and server-writable fields
+  Also define the API contract: what frontend writes to start a job, what backend updates over time, and all status transitions."
+
+AI Output Summary:
+
+- Designed jobs collection with clear field types and ownership (client vs server writable)
+- Suggested status state machine: processing → done/failed with specific UI messages
+- Provided query patterns for latest job and real-time listeners
+- Detailed the data flow: frontend creates job → Cloud Function processes → updates status → frontend reacts
+- Recommended security rules to prevent unauthorized updates
+- Included failure scenarios and reproduction steps
+
+My Decision: Accepted the schema design with minor adjustments:
+
+- Kept userId optional for MVP simplicity (no authentication required for demo)
+- Added logoStyle and surpriseMe fields to match Figma design
+- Confirmed status messages match Figma exactly ("Creating Your Design...", "Your Design is Ready!", "Oops, something went wrong!")
+- Will use simple mock URLs for resultUrl instead of Cloud Storage
+- Agreed with onCreate trigger pattern for Cloud Functions
+
+Verification: Will validate schema design by implementing Firestore rules and testing CRUD operations. Will ensure real-time listeners work correctly by testing status transitions in development.
+
+---
