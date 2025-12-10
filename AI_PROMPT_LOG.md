@@ -80,3 +80,42 @@ My Decision: Accepted the schema design with minor adjustments:
 Verification: Will validate schema design by implementing Firestore rules and testing CRUD operations. Will ensure real-time listeners work correctly by testing status transitions in development.
 
 ---
+
+### 3 — Firebase and Firestore Setup
+
+Date/Phase: Implementation
+Tool: Claude (Sonnet 4.5)
+
+Goal: Set up Firebase project and configure Firestore database for the application
+
+Context: Need to initialize Firebase in the React Native Expo app and connect to Firestore. Using Firebase Web SDK since Expo Managed Workflow doesn't support native modules. Need to configure proper imports and export db instance for use across the app. Must secure API keys using environment variables.
+
+Prompt: "Help me set up Firebase in my React Native Expo project. I need to:
+
+- Install firebase npm package
+- Create firebaseConfig.ts with proper initialization
+- Set up Firestore and export db instance
+- Use Firebase Web SDK (not native) since I'm using Expo Managed Workflow
+- Secure API keys with environment variables (not commit secrets to GitHub)
+  What's the correct configuration structure?"
+
+AI Output Summary:
+
+- Recommended installing firebase package via npm
+- Provided firebaseConfig structure with initializeApp and getFirestore
+- Explained to use Firebase Web SDK imports (firebase/app, firebase/firestore)
+- Suggested exporting db instance for reuse across components
+- Recommended using .env file with EXPO*PUBLIC* prefix for environment variables
+- Advised adding .env to .gitignore and creating .env.example template
+
+My Decision: Accepted the setup approach with security considerations:
+
+- Installed firebase package (v10.x compatible with Expo)
+- Created firebase/firebaseConfig.ts using process.env for all config values
+- Exported db instance for easy imports throughout the app
+- Created .env file with actual Firebase credentials (excluded from git)
+- Created .env.example as template for other developers
+- Updated .gitignore to ensure .env never gets committed
+- Used Web SDK as recommended for Expo compatibility
+
+Verification: Verified Firebase initialization by checking package.json for firebase dependency. Confirmed .env is in .gitignore by checking git status (should not appear). Will test Firestore connection when implementing job creation in Input screen. Reviewed Firebase and Expo documentation on environment variables.
