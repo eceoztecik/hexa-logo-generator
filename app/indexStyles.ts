@@ -1,91 +1,108 @@
+import { colors } from "@/constants/colors";
 import { Dimensions, StyleSheet } from "react-native";
-const windowWidth = Dimensions.get("window").width;
-const { height } = Dimensions.get("window");
 
+const { width, height } = Dimensions.get("window");
+
+// Responsive helpers - works for all devices
+const wp = (percentage: number) => (width * percentage) / 100;
+const hp = (percentage: number) => (height * percentage) / 100;
+
+// Styles
 const styles = StyleSheet.create({
+  // Background
   background: {
     flex: 1,
   },
+  // Container
   container: {
-    padding: 24,
+    padding: wp(6),
     flex: 1,
     justifyContent: "flex-start",
   },
+  // Header
   header: {
     textAlign: "center",
-    fontSize: 17,
+    fontSize: wp(4.5),
     fontFamily: "Manrope-ExtraBold",
-    lineHeight: 22,
-    color: "#FAFAFA",
-    marginTop: height * 0.06,
+    lineHeight: wp(6),
+    color: colors.text.primary,
+    marginTop: hp(6),
   },
+  // Prompt label row
   promptLabelRow: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: hp(1),
   },
+  // Section label
+  sectionLabel: {
+    fontSize: wp(5.3),
+    lineHeight: wp(6.7),
+    color: colors.text.primary,
+    fontFamily: "Manrope-ExtraBold",
+  },
+  // Surprise me text
+  surprise: {
+    fontSize: wp(3.5),
+    fontFamily: "Monrope-Regular",
+    color: colors.text.primary,
+    lineHeight: wp(4.8),
+  },
+  // Prompt input wrapper
   promptInputWrapper: {
     position: "relative",
   },
-
-  surprise: {
-    fontSize: 13,
-    fontFamily: "Monrope-Regular",
-    color: "#FAFAFA",
-    lineHeight: 18,
-  },
+  // Prompt input
   promptInput: {
-    borderRadius: 16,
-    backgroundColor: "#27272A",
-    color: "#fff",
-    padding: 16,
-    height: 175,
+    borderRadius: wp(4),
+    backgroundColor: colors.background.dark,
+    color: colors.text.primary,
+    padding: wp(4),
+    height: hp(20),
     textAlignVertical: "top",
+    borderWidth: 1,
+    borderColor: colors.border.transparent,
   },
-  charCount: {
-    color: "#71717A",
-    fontSize: 12,
-    lineHeight: 14,
+  // Prompt input focused
+  promptInputFocused: {
+    borderColor: colors.border.default,
+  },
+  // Character count overlay
+  charCountOverlay: {
+    position: "absolute",
+    bottom: hp(1),
+    left: wp(3),
+    fontSize: wp(3.2),
+    color: colors.text.secondary,
     fontFamily: "Manrope-Regular",
   },
+  // Status banner wrapper
+  statusBannerWrapper: {
+    marginTop: hp(3),
+    marginBottom: hp(3),
+  },
+  // Button container
   buttonContainer: {
     marginTop: "auto",
   },
+  // Button
   button: {
-    borderRadius: 24,
-    paddingVertical: 16,
+    borderRadius: wp(6),
+    paddingVertical: hp(2),
     alignItems: "center",
   },
+  // Button content
   buttonContent: {
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
   },
-
+  // Button text
   buttonText: {
-    color: "#fff",
+    color: colors.text.btnText,
     fontWeight: "600",
-    fontSize: 16,
-  },
-  charCountOverlay: {
-    position: "absolute",
-    bottom: 8,
-    left: 12,
-    fontSize: 12,
-    color: "#999",
-    fontFamily: "Manrope-Regular",
-  },
-  sectionLabel: {
-    fontSize: 20,
-    lineHeight: 25,
-    color: "#FAFAFA",
-    fontFamily: "Manrope-ExtraBold",
-  },
-
-  statusBannerWrapper: {
-    marginTop: 24,
-    marginBottom: 24,
+    fontSize: wp(4.3),
   },
 });
 

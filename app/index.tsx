@@ -1,3 +1,4 @@
+import { colors } from "@/constants/colors";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import {
@@ -33,6 +34,7 @@ const InputScreen = () => {
   const [status, setStatus] = useState<
     "idle" | "processing" | "done" | "failed"
   >("idle");
+  const [isInputFocused, setIsInputFocused] = useState(false);
 
   const [currentJobId, setCurrentJobId] = useState<string | null>(null);
   const [resultUrl, setResultUrl] = useState<string>("");
@@ -141,13 +143,18 @@ const InputScreen = () => {
         {/* Text Input */}
         <View style={styles.promptInputWrapper}>
           <TextInput
-            style={styles.promptInput}
+            style={[
+              styles.promptInput,
+              isInputFocused && styles.promptInputFocused,
+            ]}
             placeholder="A blue lion logo reading 'HEXA' in bold letters"
-            placeholderTextColor="#71717A"
+            placeholderTextColor={colors.text.secondary}
             multiline
             maxLength={500}
             value={prompt}
             onChangeText={setPrompt}
+            onFocus={() => setIsInputFocused(true)}
+            onBlur={() => setIsInputFocused(false)}
             editable={status !== "processing"}
           />
           <Text style={styles.charCountOverlay}>{prompt.length}/500</Text>
@@ -166,7 +173,7 @@ const InputScreen = () => {
             disabled={status === "processing" || !prompt.trim()}
           >
             <LinearGradient
-              colors={["#2938DC", "#943DFF"]}
+              colors={[colors.primary.blue, colors.primary.purple]}
               locations={[0, 0.7]}
               start={[0, 0]}
               end={[1, 1]}
