@@ -7,7 +7,7 @@ export const colors = {
 
   // Neutral
   neutral: {
-    white: "#FAFAFA",
+    white: "#FFFFFF",
     gray900: "#18181B",
     gray800: "#27272A",
     gray700: "#3F3F46",
