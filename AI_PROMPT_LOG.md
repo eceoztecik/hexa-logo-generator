@@ -119,3 +119,35 @@ My Decision: Accepted the setup approach with security considerations:
 - Used Web SDK as recommended for Expo compatibility
 
 Verification: Verified Firebase initialization by checking package.json for firebase dependency. Confirmed .env is in .gitignore by checking git status (should not appear). Will test Firestore connection when implementing job creation in Input screen. Reviewed Firebase and Expo documentation on environment variables.
+
+---
+
+### 4 — Input Screen UI Implementation with Responsive Design
+
+Date/Phase: Implementation
+Tool: Claude (Sonnet 4.5)
+
+Goal: Implement the Input Screen UI with responsive design that works across different device sizes
+
+Context: Building the main screen where users enter prompts and select logo styles. Need to match Figma design with dark theme. Want to ensure UI scales properly on different screen sizes (phones, tablets). Need guidance on best responsive design approach for React Native.
+
+Prompt: "I'm implementing the Input Screen for my React Native Expo app. I need the UI to be responsive across different device sizes. What are the best approaches for responsive design in React Native? Should I use percentage-based sizing, Dimensions API with helper functions like wp() and hp(), or something else? Which approach is most maintainable?"
+
+AI Output Summary:
+
+- Explained multiple responsive design approaches (flexbox, percentage, Dimensions API)
+- Recommended using Dimensions API with width percentage (wp) and height percentage (hp) helper functions
+- Suggested creating reusable helper functions: wp(percentage) and hp(percentage)
+- Explained benefits: consistent sizing, easy to maintain, works across all device sizes
+- Provided example implementation of wp/hp helpers
+
+My Decision: Accepted the wp/hp helper approach:
+
+- Created responsive helper functions in indexStyles.ts
+- Applied wp() for widths, font sizes, padding, border radius
+- Applied hp() for heights, margins, vertical spacing
+- Converted all hardcoded pixel values to responsive percentages
+- Implemented centralized color system independently for consistency
+- Result: UI now scales properly on different screen sizes
+
+Verification: Tested on iOS simulator with different device sizes (iPhone SE, iPhone 14, iPad). Verified all elements scale proportionally. Confirmed readability and usability across sizes.
