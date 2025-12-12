@@ -403,3 +403,108 @@ Code Changes:
 
 - `app/index.tsx`: Added imageKey conversion in `handleNavigateToOutput` using `styleToImageMap`
 - `app/output.tsx`: Receives correct imageKey format directly from navigation params
+
+---
+
+### 11 — Brand Name Extraction Regex Fix
+
+Date/Phase: Debugging
+Tool: Claude (Sonnet 4.5)
+
+Goal: Fix extractBrandName() function to correctly extract brand names from various prompt formats, especially "for X" and "X logo" patterns with adjectives
+
+Context: Users reported incorrect brand name extraction. Examples:
+
+- "Modern design for Quantum Solutions" extracted "Modern Design" instead of "Quantum Solutions"
+- "Minimalist logo for Apex Marketing" extracted "Minimalist Logo" instead of "Apex Marketing"
+- "Ocean Wave logo for surfing brand" correctly extracted "Ocean Wave"
+
+Current regex patterns had priority issues and weren't filtering adjectives before "logo" keyword.
+
+Prompt: "I'm having issues with brand name extraction. Test results:
+
+- Modern design for Quantum Solutions → Modern (wrong, should be Quantum Solutions)
+- Ocean Wave logo for surfing brand → Ocean Wave (correct)
+- Minimalist logo for Apex Marketing → Minimalist (wrong, should be Apex Marketing)
+- A logo with abstract shapes → A (fallback, acceptable)
+
+My current extractBrandName() function uses these patterns in order:
+
+1. Quoted text: /["'](.+?)["']/
+2. "for X": /\bfor\s+(.+?)(?:\s+with|\s+in|\s+logo|$)/i
+3. "X logo": /\b(\w+(?:\s+\w+){0,2})\s+logo\b/i
+
+Fix the regex patterns so 'for X' correctly extracts the brand name after 'for', and 'X logo' skips common adjectives like 'minimalist', 'modern' before 'logo'."
+
+AI Output Summary:
+
+- Identified that "for X" pattern was stopping too early and not capturing full brand name
+- Suggested improving regex to capture capitalized brand names: `[A-Z][\w\s&.'-]+?`
+- Recommended adding cleanup step to remove trailing "logo", "design", "brand" keywords
+- Proposed adjective filtering array for "X logo" pattern: ['minimalist', 'modern', 'professional', 'creative', 'elegant', 'simple', 'bold', 'vintage', 'abstract', 'geometric']
+- Suggested checking if first word is adjective and skipping it if multiple words exist
+
+My Decision: Accepted with implementation
+
+- Updated "for X" regex to capture brand names with capitals, spaces, and special chars (&, ., ', -)
+- Added `.replace(/\s+(logo|design|brand|company)$/i, '')` cleanup
+- Implemented adjective filtering in "X logo" pattern
+- Kept pattern priority: quoted text → "for X" → "X logo" → fallback
+
+Verification:
+
+- Tested with all reported problematic prompts
+- "Modern design for Quantum Solutions" → "Quantum Solutions" ✅
+- "Minimalist logo for Apex Marketing" → "Apex Marketing" ✅
+- "Ocean Wave logo" → "Ocean Wave" ✅ (unchanged, already worked)
+- All edge cases working correctly
+
+---
+
+### 12 — Update Surprise Me Prompts with Diverse Examples
+
+Date/Phase: Implementation
+Tool: Claude (Sonnet 4.5)
+
+Goal: Replace placeholder surprise prompts with 15 diverse, realistic examples that cover all 4 logo styles and test various brand name extraction patterns
+
+Context: Current surprisePrompts array had only 4 simple examples:
+
+- "Ece Software for Simple and clean logo"
+- "Vintage Co. for Retro and vintage style logo"
+- etc.
+
+Needed more variety to showcase different industries, prompt formats, and logo styles. Should include quoted text patterns, "for X" patterns, and direct prompt styles to test extractBrandName() function comprehensively.
+
+Prompt: "Current surprise prompts are too basic and only 4 examples. Create 15 diverse, realistic surprise prompts that:
+
+- Cover all 4 logo styles equally (monogram, abstract, mascot, no-style)
+- Include different industries (tech, law, bakery, daycare, etc.)
+- Mix prompt formats: quoted brand names ('NEXUS'), 'for X' patterns, and direct descriptions
+- Add realistic style descriptions (geometric, gradient, neon, industrial, etc.)
+- Test brand name extraction edge cases
+
+Replace the current array with professional, varied examples."
+
+AI Output Summary:
+
+- Created 15 prompts with balanced distribution across 4 styles
+- Included diverse industries: tech (Stellar Innovations, Quantum Labs), legal (Atlas & Co.), food (Cookie Crumbs), childcare (Sunshine Daycare), etc.
+- Mixed prompt formats effectively for testing extraction
+- Added descriptive style keywords: geometric patterns, gradient effects, circuit patterns, neon glow, metallic finish, ocean vibes
+- Quoted brand names: 'NEXUS', 'APEX', 'BUDDY', 'VOLT', 'SPARK', 'TITAN', 'ECHO'
+- "for X" patterns: Phoenix Creative Studio, Luna Boutique, Aqua Solutions
+- Provided realistic, production-quality prompts
+
+My Decision: Accepted
+
+- Replaced entire surprisePrompts array with AI-generated 15 examples
+- Verified each prompt format tests extractBrandName() correctly
+- Confirmed style distribution is balanced
+
+Verification:
+
+- Manually tested 5 random prompts from array
+- Confirmed brand name extraction works for all formats
+- Tested in app UI - random selection works smoothly
+- All 4 logo styles represented equally in random selections
