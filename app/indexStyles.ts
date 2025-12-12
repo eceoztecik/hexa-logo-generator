@@ -96,8 +96,8 @@ const styles = StyleSheet.create({
   // Button text
   buttonText: {
     color: colors.text.btnText,
-    fontWeight: "600",
     fontSize: wp(4.3),
+    fontFamily: "Manrope-ExtraBold",
   },
 });
 

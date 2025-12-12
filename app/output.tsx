@@ -45,7 +45,7 @@ const OutputScreen = () => {
           imageKey={imageKey || "image1"}
           size="large"
         />
-        {/* Show brand name below logo (except for No Style) */}
+        {/* Show brand name below logo */}
         {styleName !== "No Style" && (
           <Text style={[styles.logoText, { fontFamily }]}>{brandName}</Text>
         )}
