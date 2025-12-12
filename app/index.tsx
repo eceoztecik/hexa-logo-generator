@@ -7,6 +7,7 @@ import {
   doc,
   onSnapshot,
   serverTimestamp,
+  updateDoc,
 } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import {
@@ -17,7 +18,7 @@ import {
   View,
 } from "react-native";
 import LogoStyleSelector from "../components/LogoStyleSelector";
-import StatusBanner from "../components/StatusChip";
+import StatusChip from "../components/StatusChip";
 import Stars from "../components/svg/Stars";
 import { surprisePrompts } from "../constants/theme";
 import { db } from "../firebase/firebaseConfig";
@@ -85,6 +86,15 @@ const InputScreen = () => {
       });
 
       setCurrentJobId(docRef.id);
+
+      // TEMPORARY MOCK - simulates backend processing
+      setTimeout(async () => {
+        await updateDoc(doc(db, "jobs", docRef.id), {
+          status: "done",
+          resultUrl: "https://placeholder.com/mock-logo.png",
+          updatedAt: serverTimestamp(),
+        });
+      }, 5000); // 5 seconds for testing
     } catch (error) {
       console.error("Error creating job:", error);
       setStatus("failed");
@@ -123,7 +133,7 @@ const InputScreen = () => {
 
         {/* Status Chip */}
         <View style={styles.statusBannerWrapper}>
-          <StatusBanner
+          <StatusChip
             status={status}
             prompt={prompt}
             selectedStyle={selectedStyle}
