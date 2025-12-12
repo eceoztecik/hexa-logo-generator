@@ -126,19 +126,48 @@ export const styleConfigs: any = {
 
 // Helper functions
 export const extractBrandName = (prompt: string): string => {
-  // Try "X for Y" pattern first
-  let match = prompt.match(/(.+?)\s+for\s+/i);
+  // 1. In-quotation mark pattern (highest priority)
+  let match = prompt.match(/["'](.+?)["']/);
   if (match) return match[1].trim();
 
-  // Try "Y logo" pattern
-  match = prompt.match(/(.+?)\s+logo/i);
-  if (match) return match[1].trim();
+  // 2. "for X" pattern
+  match = prompt.match(
+    /\bfor\s+([A-Z][\w\s&.'-]+?)(?:\s+(?:with|in|using|and)\b|$)/i
+  );
+  if (match) {
+    const brandName = match[1].trim();
+    // Remove words like "logo" and "design" at the end.
+    return brandName.replace(/\s+(logo|design|brand|company)$/i, "").trim();
+  }
 
-  // Try reading "X" pattern (quoted text)
-  match = prompt.match(/["'](.+?)["']/);
-  if (match) return match[1].trim();
+  // 3. "X logo" pattern - take the 1-3 words that come IMMEDIATELY BEFORE "logo"
+  // Skip adjectives like "minimalist logo" and "modern logo".
+  match = prompt.match(/\b([A-Z][\w\s&.'-]+?)\s+logo\b/i);
+  if (match) {
+    const beforeLogo = match[1].trim();
+    // Filter common adjectives
+    const adjectives = [
+      "minimalist",
+      "modern",
+      "professional",
+      "creative",
+      "elegant",
+      "simple",
+      "bold",
+      "vintage",
+      "abstract",
+      "geometric",
+    ];
+    const words = beforeLogo.split(/\s+/);
 
-  // Default: use first word
+    // If the first word is an adjective and there is more than one word, skip the first word.
+    if (words.length > 1 && adjectives.includes(words[0].toLowerCase())) {
+      return words.slice(1).join(" ");
+    }
+    return beforeLogo;
+  }
+
+  // 4. Fallback: first word
   const words = prompt.trim().split(/\s+/);
   return words[0] || "Brand";
 };
