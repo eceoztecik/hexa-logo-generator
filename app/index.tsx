@@ -7,7 +7,6 @@ import {
   doc,
   onSnapshot,
   serverTimestamp,
-  updateDoc,
 } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import {
@@ -86,15 +85,6 @@ const InputScreen = () => {
       });
 
       setCurrentJobId(docRef.id);
-
-      // TEMPORARY MOCK - simulates backend processing
-      setTimeout(async () => {
-        await updateDoc(doc(db, "jobs", docRef.id), {
-          status: "done",
-          resultUrl: "https://placeholder.com/mock-logo.png",
-          updatedAt: serverTimestamp(),
-        });
-      }, 5000); // 5 seconds for testing
     } catch (error) {
       console.error("Error creating job:", error);
       setStatus("failed");
