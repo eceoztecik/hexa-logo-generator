@@ -19,7 +19,7 @@ import {
 import LogoStyleSelector from "../components/LogoStyleSelector";
 import StatusChip from "../components/StatusChip";
 import Stars from "../components/svg/Stars";
-import { surprisePrompts } from "../constants/theme";
+import { styleToImageMap, surprisePrompts } from "../constants/theme";
 import { db } from "../firebase/firebaseConfig";
 import styles from "./indexStyles";
 
@@ -93,11 +93,15 @@ const InputScreen = () => {
 
   const handleNavigateToOutput = () => {
     if (currentJobId && resultUrl) {
+      const imageKey =
+        (styleToImageMap as Record<string, string>)[selectedStyle] || "image1";
+
       router.push({
         pathname: "/output",
         params: {
           jobId: currentJobId,
           prompt: prompt,
+          imageKey: imageKey,
           resultUrl: resultUrl,
         },
       });

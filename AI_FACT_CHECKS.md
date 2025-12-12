@@ -21,3 +21,18 @@
   No manual triggering required.
 
 ---
+
+2. Component Prop Passing in React Native
+   **AI Claim:**
+   "Adding a size prop to logo components and passing it through the component tree (LogoPreview → MonogramLogo/AbstractLogo/etc.) will work correctly in React Native without prop drilling issues."
+
+**Verification Method:**
+
+Implemented size prop in LogoPreview component: size?: "small" | "large"
+Passed size prop to child components: MonogramLogo, AbstractLogo, MascotLogo, NoStyleLogo
+Tested prop propagation with console.logs at each level
+Rendered both sizes simultaneously: StatusChip (small) and Output screen (large)
+Verified responsive calculations: wp(isLarge ? 50 : 16)
+
+**Outcome:**
+✅ Confirmed. Props passed correctly through component tree without issues. Both small and large logos render simultaneously in different parts of the app. TypeScript typing with optional prop and union types worked as expected. No performance issues with conditional rendering.

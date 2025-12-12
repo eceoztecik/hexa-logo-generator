@@ -320,3 +320,86 @@ Verification:
 - Confirmed Cloud Build requirement in Firebase docs
 - Will set budget alert before deployment
 - Will monitor usage in Firebase Console after deployment
+
+---
+
+### 9 — Logo Size Responsiveness and Component Reusability
+
+Date/Phase: Debugging/Refactoring  
+Tool: Claude (Sonnet 4.5)
+
+Goal: Fix logo display issue where logos appeared too small on Output screen and refactor components for better reusability without code duplication
+
+Context: Output screen was rendering logos at small size (wp(16)) intended for StatusChip preview. Needed to support both small (StatusChip) and large (Output screen) logo displays. LogoDisplay component was acting as unnecessary wrapper. Senior engineering principle: DRY (Don't Repeat Yourself). Should create duplicate large logo components or add size prop for reusability.
+
+Prompt: "I have a logo preview system that renders small logos for StatusChip. Now I need the same logos to render large on the Output screen. Should I create duplicate large logo components or add a size prop to make components reusable? Which approach is more maintainable and follows senior engineering practices?"
+
+AI Output Summary:
+
+- Recommended adding size prop to existing logo components (DRY principle)
+- Explained benefits: single source of truth, easier maintenance, scalability
+- Suggested using conditional sizing: `isLarge ? wp(50) : wp(16)`
+- Advised removing LogoDisplay wrapper as it's redundant
+- Provided implementation pattern with size prop throughout component tree
+
+My Decision: Accepted
+
+- Implemented size prop in all logo components (Monogram, Abstract, Mascot, NoStyle)
+- Added conditional sizing logic with `isLarge` boolean
+- Removed LogoDisplay.tsx component (redundant wrapper)
+- Updated Output screen to use LogoPreview directly with size="large"
+- Cleaner architecture, single component handles both use cases
+
+Verification:
+
+- Tested StatusChip with size="small" (default) - renders wp(16) correctly
+- Tested Output screen with size="large" - renders wp(50) correctly
+- Verified no code duplication
+- Confirmed font sizes and dimensions scale proportionally with size prop
+
+Code Changes:
+
+- `components/LogoPreview.tsx`: Added size prop (`size?: "small" | "large"`), implemented conditional sizing in all logo components
+- `components/LogoDisplay.tsx`: Removed (unnecessary wrapper)
+- `app/output.tsx`: Now uses LogoPreview directly with size="large", moved card styling to localStyles
+
+---
+
+### 10 — Navigation Parameter Mapping for Logo Styles
+
+Date/Phase: Debugging  
+Tool: Claude (Sonnet 4.5)
+
+Goal: Fix bug where Output screen always showed "No Style" regardless of selected logo style, displaying only white background with text
+
+Context: User selects logo style (monogram/abstract/mascot) on Input screen, but Output screen always renders "No Style". Navigation passes `selectedStyle` ("monogram") but LogoPreview expects `imageKey` ("image1"). Two different naming conventions causing mismatch. styleMap uses imageKey format, but navigation was passing selectedStyle format directly.
+
+Prompt: "Output screen shows white background only. I'm passing selectedStyle ('monogram') in navigation params, but LogoPreview expects imageKey ('image1', 'image2', etc.). How do I convert between these formats? Where should the mapping happen - in Input screen before navigation or in Output screen after receiving params?"
+
+AI Output Summary:
+
+- Identified naming convention mismatch between selectedStyle and imageKey
+- Recommended converting at navigation source (Input screen) for clarity
+- Suggested using existing styleToImageMap from constants/theme.ts
+- Explained why converting at source is better than at destination (single responsibility principle)
+- Provided code for handleNavigateToOutput with proper mapping
+
+My Decision: Accepted
+
+- Added imageKey conversion in Input screen's handleNavigateToOutput function
+- Used styleToImageMap to convert selectedStyle → imageKey before navigation
+- Imported styleToImageMap from constants/theme.ts
+- Kept Output screen clean - receives correct format directly
+
+Verification:
+
+- Tested all 4 logo styles: Monogram, Abstract, Mascot, No Style
+- Verified correct style renders on Output screen for each selection
+- Confirmed imageKey values in navigation params: "image1", "image2", "image3", "image4"
+- Checked console logs showing correct mapping: monogram → image1, abstract → image2, etc.
+- No more white background issue, logos display correctly with proper styling
+
+Code Changes:
+
+- `app/index.tsx`: Added imageKey conversion in `handleNavigateToOutput` using `styleToImageMap`
+- `app/output.tsx`: Receives correct imageKey format directly from navigation params
