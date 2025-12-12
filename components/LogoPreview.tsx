@@ -1,10 +1,7 @@
 import { colors, withOpacity } from "@/constants/colors";
+import { wp } from "@/constants/responsive";
 import React from "react";
-import { Dimensions, Text, View } from "react-native";
-
-// Responsive helpers
-const { width } = Dimensions.get("window");
-const wp = (percentage: number) => (width * percentage) / 100;
+import { Text, View } from "react-native";
 
 // Logo Components
 const MonogramLogo = ({ brandName, fontFamily, color, size }: any) => {

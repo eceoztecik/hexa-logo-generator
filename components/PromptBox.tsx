@@ -1,18 +1,8 @@
 import { colors } from "@/constants/colors";
+import { hp, wp } from "@/constants/responsive";
 import { Feather } from "@expo/vector-icons";
 import React from "react";
-import {
-  Dimensions,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from "react-native";
-
-// Responsive helpers
-const { width, height } = Dimensions.get("window");
-const wp = (percentage: number) => (width * percentage) / 100;
-const hp = (percentage: number) => (height * percentage) / 100;
+import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
 // Types
 type PromptBoxProps = {

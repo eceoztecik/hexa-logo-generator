@@ -1,11 +1,6 @@
 import { colors } from "@/constants/colors";
-import { Dimensions, StyleSheet } from "react-native";
-
-const { width, height } = Dimensions.get("window");
-
-// Responsive helpers - works for all devices
-const wp = (percentage: number) => (width * percentage) / 100;
-const hp = (percentage: number) => (height * percentage) / 100;
+import { hp, wp } from "@/constants/responsive";
+import { StyleSheet } from "react-native";
 
 // Styles
 const styles = StyleSheet.create({

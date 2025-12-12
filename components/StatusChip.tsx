@@ -1,21 +1,16 @@
 import { colors } from "@/constants/colors";
+import { hp, wp } from "@/constants/responsive";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import {
   ActivityIndicator,
-  Dimensions,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
 } from "react-native";
-import { styleToImageMap } from "../constants/theme";
+import { styleToImageMap } from "../constants/logoConfig";
 import LogoPreview from "./LogoPreview";
-
-// Responsive helpers
-const { width, height } = Dimensions.get("window");
-const wp = (percentage: number) => (width * percentage) / 100;
-const hp = (percentage: number) => (height * percentage) / 100;
 
 // Types
 

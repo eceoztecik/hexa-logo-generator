@@ -19,7 +19,7 @@ import {
 import LogoStyleSelector from "../components/LogoStyleSelector";
 import StatusChip from "../components/StatusChip";
 import Stars from "../components/svg/Stars";
-import { styleToImageMap, surprisePrompts } from "../constants/theme";
+import { styleToImageMap, surprisePrompts } from "../constants/logoConfig";
 import { db } from "../firebase/firebaseConfig";
 import styles from "./indexStyles";
 

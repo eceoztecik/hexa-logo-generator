@@ -1,7 +1,7 @@
 import { colors } from "@/constants/colors";
+import { hp, wp } from "@/constants/responsive";
 import React from "react";
 import {
-  Dimensions,
   FlatList,
   Image,
   StyleSheet,
@@ -9,12 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import { imageMap, logoStyles, styleToImageMap } from "../constants/theme";
-
-// Responsive helpers - works for all devices
-const { width, height } = Dimensions.get("window");
-const wp = (percentage: number) => (width * percentage) / 100;
-const hp = (percentage: number) => (height * percentage) / 100;
+import { imageMap, logoStyles, styleToImageMap } from "../constants/logoConfig";
 
 // Types
 type Props = {

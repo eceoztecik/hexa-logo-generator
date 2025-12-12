@@ -52,34 +52,3 @@ export const Fonts = Platform.select({
     mono: "SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace",
   },
 });
-// Mapping logo styles to corresponding image names
-export const styleToImageMap: Record<string, string> = {
-  monogram: "image1",
-  abstract: "image2",
-  mascot: "image3",
-  "no-style": "image4",
-};
-
-// Mapping image names to actual files
-export const imageMap: Record<string, any> = {
-  image1: require("../assets/mock-logos/image1.png"),
-  image2: require("../assets/mock-logos/image2.png"),
-  image3: require("../assets/mock-logos/image3.png"),
-  image4: require("../assets/mock-logos/image4.png"),
-};
-
-// Logo styles available for user selection
-export const logoStyles = [
-  { id: "no-style", label: "No Style" },
-  { id: "monogram", label: "Monogram" },
-  { id: "abstract", label: "Abstract" },
-  { id: "mascot", label: "Mascot" },
-];
-
-// Random prompts and styles for "Surprise me" feature
-export const surprisePrompts = [
-  { prompt: "Ece Software for Simple and clean logo", style: "monogram" },
-  { prompt: "Vintage Co. for Retro and vintage style logo", style: "abstract" },
-  { prompt: "Happy Paws for Playful mascot logo", style: "mascot" },
-  { prompt: "Nova Studio for Minimalist and modern logo", style: "no-style" },
-];
