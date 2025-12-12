@@ -243,3 +243,80 @@ Verification:
 - App builds and runs successfully on iOS simulator
 - All exports from LogoPreview (extractBrandName, getFontFromPrompt, styleConfigs, styleMap) work correctly
 - Confirmed this is only file with relative import - acceptable for single use case
+
+---
+
+### 7 — Cloud Functions Setup and Python Backend Implementation
+
+Date/Phase: Implementation
+Tool: Claude (Sonnet 4.5)
+
+Goal: Set up Firebase Cloud Functions with Python to handle backend logo generation processing with 30-60 second delay and status updates
+
+Context: Need to implement backend that reacts to Firestore job creation, waits 30-60 seconds (simulating AI processing), then updates job status to done/failed. Currently using mock setTimeout in frontend which should be removed. Must use Python as specified in requirements. Need onCreate trigger for jobs collection.
+
+Prompt: "I need to set up Firebase Cloud Functions in Python for my React Native Expo app. Requirements:
+
+- onCreate trigger when document is created in 'jobs' collection
+- Wait 30-60 seconds (random delay to simulate AI processing)
+- 90% success rate, 10% failure rate
+- Update Firestore job document with status 'done' or 'failed'
+- Add resultUrl for successful jobs
+- What's the complete setup process and code?"
+
+AI Output Summary:
+
+- Provided step-by-step Firebase CLI setup instructions
+- Explained firebase init functions command with Python selection
+- Confirmed onCreate trigger pattern for Firestore documents
+- Showed how to install dependencies automatically
+- Suggested using time.sleep() for delay and random.random() for success/failure logic
+
+My Decision: Accepted
+
+- Setup completed successfully using firebase init functions
+- Python selected as language, dependencies installed automatically
+- Ready to implement onCreate trigger code in main.py
+
+Verification:
+
+- Confirmed functions/ directory created with main.py, requirements.txt, .gitignore
+- Verified firebase.json and .firebaserc created in root
+- All Python packages installed (firebase-admin, firebase-functions, etc.)
+- Will test onCreate trigger after implementing code
+
+---
+
+### 8 — Firebase Blaze Plan Requirement for Cloud Functions Deployment
+
+Date/Phase: Implementation/Debugging
+Tool: Claude (Sonnet 4.5) + Gemini
+
+Goal: Resolve deployment error requiring Blaze plan upgrade for Cloud Functions and understand cost implications
+
+Context: Attempted to deploy Python Cloud Functions with `firebase deploy --only functions` but received error: "Your project must be on the Blaze (pay-as-you-go) plan". Firebase changed infrastructure - Cloud Functions now require Google Cloud Build and Artifact Registry APIs which need billing account. Free Spark plan no longer supports Cloud Functions deployment. Need to understand actual costs and safety measures.
+
+Prompt: "Firebase requires Blaze plan to deploy Cloud Functions. Is this actually free for small projects? Will I be charged for testing? What are the risks and how can I protect myself from unexpected charges?"
+
+AI Output Summary:
+
+- Claude explained Blaze plan has generous free tier: 2M invocations/month, no charges expected for testing
+- Gemini clarified infrastructure change: Google Cloud Build/Artifact Registry now required, forcing Blaze plan
+- Both confirmed free quota sufficient for hobby/test projects
+- Gemini recommended setting up Budget Alerts in Google Cloud Console as safety measure
+- Suggested setting $1-10 budget limit to get email warnings if unexpected usage occurs
+- Confirmed credit card required but most small projects see $0 bills
+
+My Decision: Accepted - will upgrade to Blaze plan with budget protection
+
+- Backend is mandatory per case requirements (no alternative for Firebase Cloud Functions)
+- Free tier (2M invocations/month) covers testing needs (~20-30 invocations)
+- Will set up $5 budget alert in Google Cloud Console for safety
+- Alternative platforms (Vercel, Railway) would require rewriting entire backend architecture
+
+Verification:
+
+- Reviewed Firebase pricing: https://firebase.google.com/pricing
+- Confirmed Cloud Build requirement in Firebase docs
+- Will set budget alert before deployment
+- Will monitor usage in Firebase Console after deployment
