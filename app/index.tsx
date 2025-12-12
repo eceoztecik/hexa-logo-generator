@@ -10,6 +10,7 @@ import {
 } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
 import {
+  Alert,
   ImageBackground,
   Text,
   TextInput,
@@ -44,23 +45,52 @@ const InputScreen = () => {
     let unsubscribe: (() => void) | undefined;
 
     if (currentJobId) {
-      unsubscribe = onSnapshot(doc(db, "jobs", currentJobId), (docSnapshot) => {
-        const data = docSnapshot.data();
+      unsubscribe = onSnapshot(
+        doc(db, "jobs", currentJobId),
+        (docSnapshot) => {
+          const data = docSnapshot.data();
 
-        if (data?.status === "done") {
-          setStatus("done");
-          setResultUrl(data.resultUrl || "");
-        } else if (data?.status === "failed") {
+          // Validate data structure
+          if (!data || typeof data.status !== "string") {
+            console.error("Invalid job data structure");
+            return;
+          }
+
+          if (data.status === "done") {
+            // Validate resultUrl exists
+            if (!data.resultUrl) {
+              console.error("Job marked done but missing resultUrl");
+              setStatus("failed");
+              return;
+            }
+            setStatus("done");
+            setResultUrl(data.resultUrl);
+          } else if (data.status === "failed") {
+            setStatus("failed");
+          }
+        },
+        (error) => {
+          console.error("Firestore listener error:", error);
           setStatus("failed");
         }
-      });
+      );
     }
 
     return () => {
       if (unsubscribe) unsubscribe();
     };
   }, [currentJobId]);
+  // Timeout for long-running jobs
+  useEffect(() => {
+    if (status === "processing") {
+      const timeout = setTimeout(() => {
+        setStatus("failed");
+        Alert.alert("Timeout", "Job took too long. Please try again.");
+      }, 120000); // 2 minutes
 
+      return () => clearTimeout(timeout);
+    }
+  }, [status]);
   // Handlers
   const handleSurpriseMe = () => {
     setSurpriseMe(true);
@@ -71,13 +101,21 @@ const InputScreen = () => {
   };
 
   const handleGenerate = async () => {
-    if (!prompt.trim()) return;
+    const trimmedPrompt = prompt.trim();
+
+    if (!trimmedPrompt) return;
+
+    // Minimum length validation
+    if (trimmedPrompt.length < 3) {
+      Alert.alert("Prompt Too Short", "Please enter at least 3 characters");
+      return;
+    }
 
     setStatus("processing");
 
     try {
       const docRef = await addDoc(collection(db, "jobs"), {
-        prompt: prompt.trim(),
+        prompt: trimmedPrompt,
         logoStyle: selectedStyle,
         surpriseMe: surpriseMe,
         status: "processing",
@@ -87,6 +125,7 @@ const InputScreen = () => {
       setCurrentJobId(docRef.id);
     } catch (error) {
       console.error("Error creating job:", error);
+      Alert.alert("Error", "Failed to create job. Please try again.");
       setStatus("failed");
     }
   };
