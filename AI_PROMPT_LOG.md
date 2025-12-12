@@ -151,3 +151,95 @@ My Decision: Accepted the wp/hp helper approach:
 - Result: UI now scales properly on different screen sizes
 
 Verification: Tested on iOS simulator with different device sizes (iPhone SE, iPhone 14, iPad). Verified all elements scale proportionally. Confirmed readability and usability across sizes.
+
+---
+
+### 5 — Dynamic Logo Preview System with Style Mapping
+
+Date/Phase: Implementation
+Tool: Claude (Sonnet 4.5)
+
+Goal: Create a flexible logo preview system that can render different logo styles (Monogram, Abstract, Mascot, No Style) based on user selection, with dynamic brand name extraction and font selection from prompt text
+
+Context: Need to display generated logo in both StatusChip (small preview) and Output screen (large display). Each logo style has different visual representation. Must extract brand name from prompt (e.g., "A logo for ACME Corp" → "ACME"). Should support 4 styles with different colors and layouts. Want reusable LogoPreview component.
+
+Prompt: "I need to build a logo preview system in React Native with 4 different logo styles: Monogram (first letter in circle), Abstract (wave shapes), Mascot (brand name in rounded box), No Style (just text). Each preview needs to:
+
+- Accept prompt text and extract brand name
+- Render different component based on style
+- Use style-specific colors
+- Work at different sizes (small in chip, large in output screen)
+  How should I structure this? Should I use a factory pattern, mapping object, or switch statement? Also, how can I extract brand name from prompts like 'A logo for XYZ Company'?"
+
+AI Output Summary:
+
+- Recommended using mapping objects for style configuration (cleaner than switch)
+- Suggested creating separate component for each logo style
+- Proposed styleConfigs object with component references and colors
+- Recommended regex pattern for brand name extraction: /(.+?) for/i
+- Suggested making preview component accept size props for reusability
+- Advised using TypeScript for type safety on style mappings
+
+My Decision: Accepted core approach with enhancements
+
+- Used styleMap object to map imageKey → style name (accepted)
+- Created styleConfigs with component and color for each style (accepted)
+- Built separate components: MonogramLogo, AbstractLogo, MascotLogo, NoStyleLogo (accepted)
+- Implemented extractBrandName() with regex pattern suggested (accepted)
+- Added getFontFromPrompt() helper to infer font from prompt keywords like "bold", "serif", "minimal" (my addition, not suggested by AI - wanted more dynamic customization)
+- Used withOpacity() helper for Abstract logo wave gradations (my addition for visual polish)
+- Did NOT implement size props - instead used fixed responsive sizing with wp() (decided fixed sizes are sufficient for MVP scope)
+
+Verification:
+
+- Tested all 4 logo styles render correctly
+- Verified brand name extraction with various prompt formats: "Logo for X", "A logo for Y Corp", "X Company logo"
+- Tested font selection logic with prompts containing "bold", "serif", "minimal"
+- Confirmed colors match design system (colors.logoStyles.\*)
+- Checked Abstract logo opacity gradient displays correctly
+
+---
+
+### 6 — Module Resolution Troubleshooting: TypeScript Aliases vs Runtime
+
+Date/Phase: Debugging
+Tool: Claude (Sonnet 4.5) + ChatGPT
+
+Goal: Resolve module import issue where @ path alias wasn't working for LogoPreview component imports
+
+Context: Implementing Output screen and importing utilities from LogoPreview. Using @ alias throughout the app (e.g., @/components/Header) but @/components/LogoPreview was throwing "Cannot find module" error. TypeScript showed no errors but ESLint complained and it felt unreliable.
+
+Prompt: "I have @ path alias configured in tsconfig.json and it works for most imports, but @/components/LogoPreview gives 'Cannot find module' error. TypeScript doesn't complain but ESLint does. Relative import ../components/LogoPreview works fine. What's the issue? Should I fix the alias configuration or just use relative imports?"
+
+AI Output Summary:
+
+- Explained that TypeScript and Metro bundler handle module resolution separately
+- Recommended creating babel.config.js with babel-plugin-module-resolver
+- Provided configuration for alias mapping in Babel
+- Suggested installing eslint-import-resolver-babel-module for ESLint compatibility
+- Mentioned clearing Metro cache after Babel configuration changes
+- ChatGPT confirmed this is a classic path alias problem: TypeScript reads the alias but ESLint and Metro bundler don't, requiring proper configuration for all three tools
+
+My Decision: Rejected AI's solution and chose pragmatic approach
+
+- Created babel.config.js with module-resolver plugin as AI suggested
+- Installed babel-plugin-module-resolver package
+- App runs successfully with @ alias BUT ESLint still shows errors
+- Investigated further but ESLint resolver configuration became complex
+- Decided to use relative import (../components/LogoPreview) instead
+- Reasoning:
+  - Relative import is only one level up (../) - very readable
+  - No tooling configuration complexity
+  - Works consistently across TypeScript, Metro, and ESLint
+  - Eliminates red squiggles and potential edge cases
+  - MVP scope doesn't justify the additional configuration complexity
+- This is acceptable technical debt - can refactor to absolute imports later if needed
+
+Verification:
+
+- Changed import back to ../components/LogoPreview
+- No TypeScript errors
+- No ESLint errors
+- App builds and runs successfully on iOS simulator
+- All exports from LogoPreview (extractBrandName, getFontFromPrompt, styleConfigs, styleMap) work correctly
+- Confirmed this is only file with relative import - acceptable for single use case
