@@ -91,6 +91,14 @@ const InputScreen = () => {
       return () => clearTimeout(timeout);
     }
   }, [status]);
+  // Reset status when prompt or style changes after a job is done
+  useEffect(() => {
+    if (status === "done" || status === "failed") {
+      setStatus("idle");
+      setCurrentJobId(null);
+      setResultUrl("");
+    }
+  }, [prompt, selectedStyle]);
   // Handlers
   const handleSurpriseMe = () => {
     setSurpriseMe(true);
