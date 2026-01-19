@@ -1,25 +1,70 @@
 import { colors, withOpacity } from "@/constants/colors";
 import { wp } from "@/constants/responsive";
 import React from "react";
-import { Text, View } from "react-native";
+import { Text, View, ViewStyle } from "react-native";
+
+// Types
+
+export type LogoSize = "small" | "large";
+
+type BaseLogoProps = {
+  size: LogoSize;
+};
+
+type ColorProp = {
+  color: string;
+};
+
+type BrandProp = {
+  brandName: string;
+};
+
+type FontProp = {
+  fontFamily?: string;
+};
+
+type MonogramProps = BaseLogoProps & BrandProp & FontProp & ColorProp;
+type AbstractProps = BaseLogoProps & ColorProp;
+type MascotProps = BaseLogoProps & BrandProp & ColorProp;
+type NoStyleProps = BaseLogoProps & BrandProp & FontProp;
+
+type StyleName = "Monogram" | "Abstract" | "Mascot" | "No Style";
+type ImageKey = "image1" | "image2" | "image3" | "image4";
+
+type StylePropsMap = {
+  Monogram: MonogramProps;
+  Abstract: AbstractProps;
+  Mascot: MascotProps;
+  "No Style": NoStyleProps;
+};
+
+type StyleConfig<K extends StyleName> = {
+  component: React.ComponentType<StylePropsMap[K]>;
+  color: string;
+};
 
 // Logo Components
-const MonogramLogo = ({ brandName, fontFamily, color, size }: any) => {
+
+const MonogramLogo = ({
+  brandName,
+  fontFamily,
+  color,
+  size,
+}: MonogramProps) => {
   const isLarge = size === "large";
+
   return (
     <View
-      style={[
-        {
-          width: wp(isLarge ? 50 : 16),
-          height: wp(isLarge ? 50 : 16),
-          backgroundColor: color,
-          borderRadius: wp(isLarge ? 8 : 10),
-          borderWidth: isLarge ? 2 : 1,
-          borderColor: colors.border.dark,
-          justifyContent: "center",
-          alignItems: "center",
-        },
-      ]}
+      style={{
+        width: wp(isLarge ? 50 : 16),
+        height: wp(isLarge ? 50 : 16),
+        backgroundColor: color,
+        borderRadius: wp(isLarge ? 8 : 10),
+        borderWidth: isLarge ? 2 : 1,
+        borderColor: colors.border.dark,
+        justifyContent: "center",
+        alignItems: "center",
+      }}
     >
       <Text
         style={{
@@ -29,14 +74,23 @@ const MonogramLogo = ({ brandName, fontFamily, color, size }: any) => {
           fontFamily,
         }}
       >
-        {brandName[0].toUpperCase()}
+        {brandName.charAt(0).toUpperCase()}
       </Text>
     </View>
   );
 };
 
-const Wave = ({ color, style, size }: any) => {
+const Wave = ({
+  color,
+  size,
+  style,
+}: {
+  color: string;
+  size: LogoSize;
+  style?: ViewStyle;
+}) => {
   const isLarge = size === "large";
+
   return (
     <View
       style={[
@@ -53,16 +107,17 @@ const Wave = ({ color, style, size }: any) => {
   );
 };
 
-const AbstractLogo = ({ color, size }: any) => (
+const AbstractLogo = ({ color, size }: AbstractProps) => (
   <View>
-    <Wave color={withOpacity(color, 0.7)} style={{}} size={size} />
-    <Wave color={withOpacity(color, 0.85)} style={{}} size={size} />
-    <Wave color={withOpacity(color, 1)} style={{}} size={size} />
+    <Wave color={withOpacity(color, 0.7)} size={size} />
+    <Wave color={withOpacity(color, 0.85)} size={size} />
+    <Wave color={withOpacity(color, 1)} size={size} />
   </View>
 );
 
-const MascotLogo = ({ brandName, color, size }: any) => {
+const MascotLogo = ({ brandName, color, size }: MascotProps) => {
   const isLarge = size === "large";
+
   return (
     <View
       style={{
@@ -89,39 +144,53 @@ const MascotLogo = ({ brandName, color, size }: any) => {
   );
 };
 
-const NoStyleLogo = ({ brandName, fontFamily, size }: any) => {
+const NoStyleLogo = ({ brandName, fontFamily, size }: NoStyleProps) => {
   const isLarge = size === "large";
+
   return (
-    <View>
-      <Text
-        style={{
-          fontSize: wp(isLarge ? 10 : 4.3),
-          color: "#222",
-          textAlign: "center",
-          fontFamily,
-        }}
-        numberOfLines={2}
-        ellipsizeMode="tail"
-      >
-        {brandName}
-      </Text>
-    </View>
+    <Text
+      style={{
+        fontSize: wp(isLarge ? 10 : 4.3),
+        color: "#222",
+        textAlign: "center",
+        fontFamily,
+      }}
+      numberOfLines={2}
+      ellipsizeMode="tail"
+    >
+      {brandName}
+    </Text>
   );
 };
 
 // Style Mappings
-export const styleMap: any = {
+
+export const styleMap: Record<ImageKey, StyleName> = {
   image1: "Monogram",
   image2: "Abstract",
   image3: "Mascot",
   image4: "No Style",
 };
 
-export const styleConfigs: any = {
-  Monogram: { component: MonogramLogo, color: colors.logoStyles.monogram },
-  Abstract: { component: AbstractLogo, color: colors.logoStyles.abstract },
-  Mascot: { component: MascotLogo, color: colors.logoStyles.mascot },
-  "No Style": { component: NoStyleLogo, color: colors.logoStyles.noStyle },
+export const styleConfigs: {
+  [K in StyleName]: StyleConfig<K>;
+} = {
+  Monogram: {
+    component: MonogramLogo,
+    color: colors.logoStyles.monogram,
+  },
+  Abstract: {
+    component: AbstractLogo,
+    color: colors.logoStyles.abstract,
+  },
+  Mascot: {
+    component: MascotLogo,
+    color: colors.logoStyles.mascot,
+  },
+  "No Style": {
+    component: NoStyleLogo,
+    color: colors.logoStyles.noStyle,
+  },
 };
 
 // Helper functions
@@ -129,80 +198,99 @@ export const extractBrandName = (prompt: string): string => {
   // 1. In-quotation mark pattern (highest priority)
   let match = prompt.match(/["'](.+?)["']/);
   if (match) return match[1].trim();
-
   // 2. "for X" pattern
   match = prompt.match(
-    /\bfor\s+([A-Z][\w\s&.'-]+?)(?:\s+(?:with|in|using|and)\b|$)/i
+    /\bfor\s+([A-Z][\w\s&.'-]+?)(?:\s+(?:with|in|using|and)\b|$)/i,
   );
   if (match) {
-    const brandName = match[1].trim();
     // Remove words like "logo" and "design" at the end.
-    return brandName.replace(/\s+(logo|design|brand|company)$/i, "").trim();
+    return match[1].replace(/\s+(logo|design|brand|company)$/i, "").trim();
   }
-
   // 3. "X logo" pattern - take the 1-3 words that come IMMEDIATELY BEFORE "logo"
   // Skip adjectives like "minimalist logo" and "modern logo".
   match = prompt.match(/\b([A-Z][\w\s&.'-]+?)\s+logo\b/i);
-  if (match) {
-    const beforeLogo = match[1].trim();
-    // Filter common adjectives
-    const adjectives = [
-      "minimalist",
-      "modern",
-      "professional",
-      "creative",
-      "elegant",
-      "simple",
-      "bold",
-      "vintage",
-      "abstract",
-      "geometric",
-    ];
-    const words = beforeLogo.split(/\s+/);
+  if (match) return match[1].trim();
 
-    // If the first word is an adjective and there is more than one word, skip the first word.
-    if (words.length > 1 && adjectives.includes(words[0].toLowerCase())) {
-      return words.slice(1).join(" ");
-    }
-    return beforeLogo;
-  }
-
-  // 4. Fallback: first word
-  const words = prompt.trim().split(/\s+/);
-  return words[0] || "Brand";
+  return prompt.split(/\s+/)[0] || "Brand";
 };
 
 export const getFontFromPrompt = (prompt: string): string => {
-  if (prompt.toLowerCase().includes("serif")) return "Manrope-ExtraBold";
-  if (prompt.toLowerCase().includes("bold")) return "Manrope-Bold";
-  if (prompt.toLowerCase().includes("minimal")) return "Manrope-Regular";
+  const lower = prompt.toLowerCase();
+  if (lower.includes("serif")) return "Manrope-ExtraBold";
+  if (lower.includes("bold")) return "Manrope-Bold";
+  if (lower.includes("minimal")) return "Manrope-Regular";
   return "Manrope-SemiBold";
 };
 
-// Component
+// Render Helper
+
+const renderLogoByStyle = ({
+  styleName,
+  size,
+  brandName,
+  fontFamily,
+}: {
+  styleName: StyleName;
+  size: LogoSize;
+  brandName: string;
+  fontFamily: string;
+}) => {
+  switch (styleName) {
+    case "Monogram": {
+      const { component: Component, color } = styleConfigs.Monogram;
+      return (
+        <Component
+          size={size}
+          brandName={brandName}
+          fontFamily={fontFamily}
+          color={color}
+        />
+      );
+    }
+
+    case "Abstract": {
+      const { component: Component, color } = styleConfigs.Abstract;
+      return <Component size={size} color={color} />;
+    }
+
+    case "Mascot": {
+      const { component: Component, color } = styleConfigs.Mascot;
+      return <Component size={size} brandName={brandName} color={color} />;
+    }
+
+    case "No Style": {
+      const { component: Component } = styleConfigs["No Style"];
+      return (
+        <Component size={size} brandName={brandName} fontFamily={fontFamily} />
+      );
+    }
+  }
+};
+
+// Main Component
+
+type LogoPreviewProps = {
+  prompt: string;
+  imageKey: ImageKey;
+  size?: LogoSize;
+};
+
 const LogoPreview = ({
   prompt,
   imageKey,
   size = "small",
-}: {
-  prompt: string;
-  imageKey: string;
-  size?: "small" | "large";
-}) => {
-  const styleName = styleMap[imageKey] || "No Style";
-  const { component: Component, color } = styleConfigs[styleName];
+}: LogoPreviewProps) => {
+  const styleName = styleMap[imageKey];
 
   const brandName = extractBrandName(prompt);
   const fontFamily = getFontFromPrompt(prompt);
 
-  return (
-    <Component
-      brandName={brandName}
-      fontFamily={fontFamily}
-      color={color}
-      size={size}
-    />
-  );
+  return renderLogoByStyle({
+    styleName,
+    size,
+    brandName,
+    fontFamily,
+  });
 };
 
 export default LogoPreview;
