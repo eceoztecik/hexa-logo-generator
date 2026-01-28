@@ -1,9 +1,11 @@
 from firebase_admin import firestore
 from models import Job
 
-db = firestore.client()
 
 def update_job(job: Job):
+    """Update job in Firestore."""
+    db = firestore.client()
+    
     try:
         job_ref = db.collection("jobs").document(job.id)
         update_data = {
@@ -19,11 +21,14 @@ def update_job(job: Job):
         job_ref.update(update_data)
 
     except Exception as e:
-        print(f"Failed to update job {job.id}: {e}")
+        print(f"Error updating job {job.id}: {e}")
         raise
 
 
 def get_job(job_id: str) -> Job:
+    """Get job from Firestore."""
+    db = firestore.client()
+    
     doc = db.collection("jobs").document(job_id).get()
     if doc.exists:
         data = doc.to_dict()
