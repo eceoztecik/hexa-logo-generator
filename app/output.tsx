@@ -10,6 +10,7 @@ import LogoPreview, {
   styleMap,
 } from "../components/LogoPreview";
 import styles from "./outputStyles";
+import { isValidImageKey } from "@/types/logo.types";
 
 const OutputScreen = () => {
   // Get navigation params (prompt and imageKey from Input screen)
@@ -19,9 +20,12 @@ const OutputScreen = () => {
   }>();
 
   // Extract logo details from prompt
-  const styleName = styleMap[imageKey || "image1"] || "No Style";
-  const brandName = extractBrandName(prompt || "");
-  const fontFamily = getFontFromPrompt(prompt || "");
+  const validImageKey = isValidImageKey(imageKey) ? imageKey : "image1";
+  const styleName = styleMap[validImageKey];
+  const safePrompt = typeof prompt === "string" ? prompt : "";
+
+  const brandName = extractBrandName(safePrompt);
+  const fontFamily = getFontFromPrompt(safePrompt);
 
   // Copy prompt to clipboard
   const handleCopyPrompt = () => {
@@ -42,7 +46,7 @@ const OutputScreen = () => {
       <View style={styles.logoCard}>
         <LogoPreview
           prompt={prompt || ""}
-          imageKey={imageKey || "image1"}
+          imageKey={validImageKey}
           size="large"
         />
         {/* Show brand name below logo */}

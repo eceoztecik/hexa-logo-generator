@@ -1,11 +1,10 @@
 import { colors, withOpacity } from "@/constants/colors";
 import { wp } from "@/constants/responsive";
+import { ImageKey, LogoSize, StyleName } from "@/types/logo.types";
 import React from "react";
 import { Text, View, ViewStyle } from "react-native";
 
 // Types
-
-export type LogoSize = "small" | "large";
 
 type BaseLogoProps = {
   size: LogoSize;
@@ -27,9 +26,6 @@ type MonogramProps = BaseLogoProps & BrandProp & FontProp & ColorProp;
 type AbstractProps = BaseLogoProps & ColorProp;
 type MascotProps = BaseLogoProps & BrandProp & ColorProp;
 type NoStyleProps = BaseLogoProps & BrandProp & FontProp;
-
-type StyleName = "Monogram" | "Abstract" | "Mascot" | "No Style";
-type ImageKey = "image1" | "image2" | "image3" | "image4";
 
 type StylePropsMap = {
   Monogram: MonogramProps;
@@ -263,6 +259,10 @@ const renderLogoByStyle = ({
       return (
         <Component size={size} brandName={brandName} fontFamily={fontFamily} />
       );
+    }
+    default: {
+      const _exhaustiveCheck: never = styleName;
+      return _exhaustiveCheck;
     }
   }
 };

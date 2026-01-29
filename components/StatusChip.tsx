@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { styleToImageMap } from "../constants/logoConfig";
 import LogoPreview from "./LogoPreview";
+import { isValidImageKey } from "@/types/logo.types";
 
 // Types
 
@@ -31,8 +32,10 @@ const StatusChip = ({
   onRetry,
   onNavigate,
 }: StatusChipProps) => {
-  const imageKey =
-    (styleToImageMap as Record<string, string>)[selectedStyle] || "image1";
+  const imageKeyFromMap = styleToImageMap[selectedStyle] || "image1";
+  const imageKey = isValidImageKey(imageKeyFromMap)
+    ? imageKeyFromMap
+    : "image1";
 
   // Processing State
   if (status === "processing") {
