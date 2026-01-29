@@ -73,6 +73,13 @@ I consulted multiple AI tools when:
 - Created AI collaboration logs and iteration examples
 - Documented architectural decisions and trade-offs
 
+### 8. Backend Architecture Migration
+
+- Migrated from blocking time.sleep() to Cloud Tasks async pattern
+- Researched production-grade job queue solutions
+- Implemented two-function architecture (trigger + completion)
+- Set up IAM permissions and OIDC authentication
+
 ---
 
 ## Most Useful Prompts

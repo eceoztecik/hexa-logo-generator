@@ -95,3 +95,22 @@
 
 **Outcome:**
 ✅ Confirmed. All testing stayed well within free tier. Usage dashboard showed ~30 invocations, 0% of monthly quota. No charges incurred. Budget alert never triggered. Free tier is more than sufficient for demo/testing purposes.
+
+## 6. Cloud Tasks for Production Async Processing
+
+**AI Claim:**
+"Google Cloud Tasks is production-standard for async job processing with scheduled delays, commonly used for workflows like audio processing and video encoding."
+
+**Verification Method:**
+
+- Read Google Cloud Tasks documentation
+- Researched async job queue patterns (Celery, RabbitMQ, Cloud Tasks)
+- Implemented with OIDC authentication and IAM permissions
+- Tested 30-60 second delay execution
+- Monitored logs for task scheduling and completion
+- Compared with alternatives (Pub/Sub, Firestore triggers with sleep)
+
+**Outcome:**
+✅ Confirmed as production-ready pattern. Cloud Tasks successfully executed after scheduled delay (logs show: task creation → 41s delay → HTTP POST to complete_job). Industry-standard approach for decoupling work and avoiding blocking execution. Cost-effective: function runs 2s instead of 60s.
+
+**Note:** While AI mentioned specific companies, I verified the pattern itself is production-standard rather than relying on unverified company claims. The architecture decision was based on Google Cloud documentation and measurable benefits (cost, scalability, reliability).

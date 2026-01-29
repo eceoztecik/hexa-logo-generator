@@ -508,3 +508,46 @@ Verification:
 - Confirmed brand name extraction works for all formats
 - Tested in app UI - random selection works smoothly
 - All 4 logo styles represented equally in random selections
+
+## 13 — Cloud Tasks Migration
+
+Phase: Backend Development
+Tool: ChatGPT
+Goal: Replace blocking time.sleep() with production-ready async pattern
+Prompt:
+"My Firebase Function uses time.sleep(30-60s). Works but not production-ready. Recommend async solution? Delay is mandatory (AI simulation)."
+AI Output:
+
+Recommended Cloud Tasks
+Two-function pattern (trigger + completion)
+OIDC authentication
+Cost/scalability benefits
+
+My Decision: Accepted after validation
+Researched independently. Implemented with IAM permissions and region consistency.
+Code Changes:
+
+Created task_scheduler.py
+Split into handle_job_creation + complete_job
+Added COMPLETION_FUNCTION_URL to config
+
+## 14 — Cloud Tasks Region Debug
+
+Phase: Debugging
+Tool: ChatGPT
+Goal: Fix tasks not executing (jobs stuck in "processing")
+Prompt:
+"Tasks scheduled successfully (logs confirm) but complete_job never called. Jobs stuck in 'processing'. Why?"
+AI Output:
+
+Check region consistency
+Verify IAM permissions
+Review OIDC service account
+
+My Decision: Identified region mismatch
+Functions in us-central1, Firestore in eur3. Moved everything to europe-west1.
+Code Changes:
+
+All functions: region="europe-west1"
+Config: LOCATION = "europe-west1"
+Fixed service account email

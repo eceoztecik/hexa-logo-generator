@@ -76,7 +76,7 @@ onSnapshot(
   (error) => {
     console.error("Firestore listener error:", error);
     setStatus("failed");
-  }
+  },
 );
 ```
 
@@ -256,3 +256,20 @@ Good defensive programming. While Cloud Functions should always write valid data
 **Rejected (4):** Custom hook extraction, React.memo optimization, time.sleep replacement, race condition flag
 
 **Key Insight:** AI suggestions were strongest on error handling, validation, and security - areas where MVPs often cut corners. I accepted most suggestions that improve reliability and UX with minimal code changes, while rejecting optimizations that add complexity without clear benefit for demo scope.
+
+### 13. Consider Cloud Tasks for Production Scalability (Suggested by: ChatGPT)
+
+**AI Suggestion:**
+Replace blocking time.sleep() with async pattern like Cloud Tasks for better scalability and cost efficiency.
+
+**My Decision:** Accepted
+
+**Reasoning:**
+time.sleep() is anti-pattern for production. Cloud Tasks provides:
+
+- Non-blocking execution (1-2s vs 60s)
+- ~90% cost reduction (no idle waiting)
+- Built-in retry logic
+- Industry-standard pattern
+
+Implemented two-function architecture with proper IAM permissions. Verified with real jobs - execution time dropped from 60s to 2s.
