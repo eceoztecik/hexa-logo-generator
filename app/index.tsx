@@ -72,7 +72,7 @@ const InputScreen = () => {
         (error) => {
           console.error("Firestore listener error:", error);
           setStatus("failed");
-        }
+        },
       );
     }
 
@@ -126,7 +126,7 @@ const InputScreen = () => {
         prompt: trimmedPrompt,
         logoStyle: selectedStyle,
         surpriseMe: surpriseMe,
-        status: "processing",
+        status: "pending",
         createdAt: serverTimestamp(),
       });
 
