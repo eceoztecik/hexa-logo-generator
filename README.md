@@ -324,3 +324,14 @@ The video demonstrates:
 - Surprise Me feature with random prompts
 - Cross-platform compatibility (iOS & Android)
 - Complete user journey from input to output
+
+## Backend Architecture Improvement
+
+Job processing was migrated from a blocking `time.sleep`-based approach
+to an asynchronous Cloud Tasks architecture.
+
+This change eliminates function timeouts, reduces cost, and enables
+scalable, production-ready background processing.
+
+Cloud Tasks is an industry-standard solution for delayed execution and
+AI/ML pipelines, making the system ready for future real AI integration.
